@@ -83,7 +83,7 @@ app.delete("/delete/:id", (req, res) => {
 });
 
 
-app.listen(3006, () => {
-    console.log("Servidor escuchando en el puerto 3006");
+app.listen(42069, () => {
+    console.log("Servidor escuchando en el puerto 42069");
 });
 
