@@ -9,9 +9,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const pool = new pg.Pool({
-    host: "localhost",
+    host: "35.223.222.189",
     user: "root",
-    password: "",
+    password: "1234",
     database: "estudiantes"
 });
 
