@@ -1,7 +1,6 @@
 const express = require("express");
 const pg = require("pg");
 const cors = require("cors");
-
 const app = express();
 
 app.use(cors());
@@ -20,14 +19,14 @@ pool.on('connect', () => {
 });
 
 app.post("/create", (req, res) => {
-    const { nombre, curso, rut } = req.body;
+    const { nombre, curso, rut,fecha,hora_de_ingreso } = req.body;
 
-    if (!nombre || !curso || !rut) {
+    if (!nombre || !curso || !rut   || !fecha || !hora_de_ingreso) {
         console.error("Faltan campos requeridos:", req.body);
         return res.status(400).send("Faltan campos requeridos");
     }
 
-    pool.query('INSERT INTO estudiantes(nombre, curso, rut) VALUES($1, $2, $3)', [nombre, curso, rut], (err, result) => {
+    pool.query('INSERT INTO estudiantes(nombre, curso, rut,fecha,hora_de_ingreso VALUES($1, $2, $3)', [nombre, curso, rut], (err, result) => {
         if (err) {
             console.error("Error al insertar estudiante:", err);
             return res.status(500).send("Error al registrar estudiante");
@@ -39,14 +38,16 @@ app.post("/create", (req, res) => {
 });
 
 app.put("/update", (req, res) => {
-    const { id, nombre, curso, rut } = req.body;
+    const { id, nombre, curso, rut,fecha, hora_de_ingreso } = req.body;
 
-    if (!id || !nombre || !curso || !rut) {
+    if (!id || !nombre || !curso || !rut  || !fecha || !hora_de_ingreso ) {
         console.error("Faltan campos requeridos:", req.body);
         return res.status(400).send("Faltan campos requeridos");
     }
 
-    pool.query('UPDATE estudiantes SET nombre=$1, rut=$2, curso=$3 WHERE id=$4', [nombre, rut, curso, id], (err, result) => {    
+    console.log("Datos recibidos para actualizar:", req.body);
+
+    pool.query('UPDATE estudiantes SET nombre=$1, rut=$2, curso=$3, fecha=$4, hora_de_ingreso=$5 WHERE id=$6', [nombre, rut, curso,fecha,hora_de_ingreso, id], (err, result) => {
         if (err) {
             console.error("Error al actualizar estudiante:", err);
             return res.status(500).send("Error al actualizar estudiante");
@@ -64,14 +65,14 @@ app.get("/estudiantes", (req, res) => {
             return res.status(500).send("Error al obtener estudiantes");
         }
 
-        res.send(result);
+        res.send(result.rows);
     });
 });
 
 app.delete("/delete/:id", (req, res) => {
     const id = req.params.id;
 
-    pool.query('DELETE FROM estudiantes WHERE id=$1', [id], (err, result) => {    
+    pool.query('DELETE FROM estudiantes WHERE id=$1', [id], (err, result) => {
         if (err) {
             console.error("Error al eliminar estudiante:", err);
             return res.status(500).send("Error al eliminar estudiante");
@@ -81,6 +82,11 @@ app.delete("/delete/:id", (req, res) => {
         res.send("Estudiante eliminado con éxito");
     });
 });
+
+app.listen(42069, () => {
+    console.log("Servidor escuchando en el puerto 42069");
+});
+
 
 
 app.listen(42069, () => {
